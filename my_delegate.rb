@@ -3,7 +3,7 @@ module MyDelegate
   def delegate(method, target)
     class_eval <<-CODE
       def #{method}(*args, &block)
-        #{target}.send("#{method}", *args, &block)
+        #{target}.#{method}(*args, &block)
       end
     CODE
   end
