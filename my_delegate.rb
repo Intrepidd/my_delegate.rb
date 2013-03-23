@@ -1,25 +1,11 @@
 module MyDelegate
 
-  def self.extended(base)
-    base.class_variable_set :@@_delegates, {}
-  end
-
   def delegate(method, target)
-    self.class_variable_get(:@@_delegates)[method] = target
-    include ClassMethods
-  end
-
-  module ClassMethods
-
-    def method_missing(method, *args, &block)
-      target = self.class.class_variable_get(:@@_delegates)[method]
-      if target
-        self.instance_variable_get("@#{target}").send(method, *args, &block)
-      else
-        super
+    class_eval <<-CODE
+      def #{method}(*args, &block)
+        #{target}.send("#{method}", *args, &block)
       end
-    end
-
+    CODE
   end
 
 end
